@@ -1,0 +1,88 @@
+"""
+The list of commands and their usage is given below:
+
+# Adding a new task
+task-cli add "Buy groceries"
+# Output: Task added successfully (ID: 1)
+
+# Updating and deleting tasks
+task-cli update 1 "Buy groceries and cook dinner"
+task-cli delete 1
+
+# Marking a task as in progress or done
+task-cli mark-in-progress 1
+task-cli mark-done 1
+
+# Listing all tasks
+task-cli list
+
+# Listing tasks by status
+task-cli list done
+task-cli list todo
+task-cli list in-progress
+Task Properties
+Each task should have the following properties:
+
+id: A unique identifier for the task
+description: A short description of the task
+status: The status of the task (todo, in-progress, done)
+createdAt: The date and time when the task was created
+updatedAt: The date and time when the task was last updated
+"""
+#user=input("Name?")
+#print("Welcome, {}. What do you want to do? (help for list of commands.)".format(user))
+import json, os
+from datetime import datetime
+print(os.path.exists("tasks.json"))
+
+def add(s):
+    cur_time =datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    current_task={"id":s,"description":s,"status":"todo", "createdAt":cur_time,"updatedAt":cur_time}
+
+    try:
+        with open("tasks.json", "r") as file:
+            tasks=json.load(file)
+    except:
+        tasks=[]
+
+    tasks.append(current_task)
+
+    with open("tasks.json","w") as file:
+        json.dump(tasks, file, indent=4)
+    print("Task added successfully!")
+    main()
+
+
+
+def update(s):
+    print(s)
+def delete(s):
+    print(s)
+def mark_in_progress(s):
+    print(s)
+def mark_done(s):
+    print(s)
+
+def list(j=True):
+    try:
+        with open("tasks.json","r") as file:
+            tasks=json.load(file)
+            for task in tasks:
+                print(f">>> [ {task['id']} ]'s status is [ {task['status']} ]")
+    except:
+        print("No task found.")
+    main()
+
+def main():
+    com=input("What to do?")
+    if com[:3]=="add":
+        task_name=com[4:]
+        add(task_name)
+    if com[:4]=="list":
+        try:
+            list(com[5:])
+        except:
+            list()
+
+
+main()
