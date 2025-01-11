@@ -37,27 +37,57 @@ print(os.path.exists("tasks.json"))
 
 def add(s):
     cur_time =datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    current_task={"id":s,"description":s,"status":"todo", "createdAt":cur_time,"updatedAt":cur_time}
-
     try:
         with open("tasks.json", "r") as file:
             tasks=json.load(file)
+        curr_task_id=tasks[-1]["id"]+1
     except:
         tasks=[]
+        curr_task_id=1
+    current_task={"id":curr_task_id,"description":s,"status":"todo", "createdAt":cur_time,"updatedAt":cur_time}
 
     tasks.append(current_task)
 
     with open("tasks.json","w") as file:
         json.dump(tasks, file, indent=4)
-    print("Task added successfully!")
+    print("Task added successfully! (ID={})".format(curr_task_id))
     main()
-
-
 
 def update(s):
     print(s)
-def delete(s):
-    print(s)
+def delete(id):
+    if id=="all":
+        with open("tasks.json","w") as file:
+            #print(new_tasks)
+            json.dump([], file, indent=4)
+        print("All tasks deleted.")
+        return main()
+    else:
+        try:
+            id=int(id)
+        except:
+            print("unknown id")
+            return main()
+
+    with open("tasks.json","r") as tasks:
+        tasks=json.load(tasks)
+        new_tasks=[]
+        i=0
+        for dic in tasks:
+            if dic["id"]!=id:
+                new_tasks.append(dic)
+                #print(f"task {dic["id"]} is not it")
+                i+=1
+        if i == len(tasks):
+            print("no task with id {} found.".format(id))
+            return main()
+
+    with open("tasks.json","w") as file:
+        #print(new_tasks)
+        json.dump(new_tasks, file, indent=4)
+    print("task (id={}) deleted".format(id))
+    main()
+    
 def mark_in_progress(s):
     print(s)
 def mark_done(s):
@@ -68,10 +98,12 @@ def list(j=True):
         with open("tasks.json","r") as file:
             tasks=json.load(file)
             for task in tasks:
-                print(f">>> [ {task['id']} ]'s status is [ {task['status']} ]")
+                print(f">>> [ {task['id']} ] - [ {task['description']} ]'s status is [ {task['status']} ]")
+            if tasks == []:
+                print("task list is empty.")
     except:
         print("No task found.")
-    main()
+    return main()
 
 def main():
     com=input("What to do?")
@@ -83,6 +115,9 @@ def main():
             list(com[5:])
         except:
             list()
+    if com[:len("delete")]=="delete":
+        #print(com[len("delete")+1:])
+        delete(com[len("delete")+1:])
 
 
 main()
