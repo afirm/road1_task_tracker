@@ -33,7 +33,7 @@ updatedAt: The date and time when the task was last updated
 #print("Welcome, {}. What do you want to do? (help for list of commands.)".format(user))
 import json, os
 from datetime import datetime
-print(os.path.exists("tasks.json"))
+
 
 def add(s):
     cur_time =datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -54,7 +54,37 @@ def add(s):
     main()
 
 def update(s):
-    print(s)
+    id = s.split(" ")[0]
+    desc=" ".join(s.split(" ")[1:])
+    if os.path.exists("tasks.json"):
+        with open("tasks.json", "r") as file:
+            tasks=json.load(file)
+            newtasks=[]
+            changed =False
+            try:
+                for task in tasks:
+                    if task['id']== int(id):
+                        task["description"] = desc
+                        newtasks.append(task)
+                        changed = True
+                        msg = f"Task {id} updated successfully."
+                    else:
+                        newtasks.append(task)
+                        if not changed:
+                            msg =f"No task with id {id} found."
+
+                with open("tasks.json","w") as file:
+                    json.dump(newtasks,file,indent=4)
+                    print(msg)
+            except:
+                print(f"{id} is not a valid id.")
+                return main()
+    else:
+        print(f"no task found")
+        return main()
+    main()
+
+
 def delete(id):
     if id=="all":
         with open("tasks.json","w") as file:
@@ -118,6 +148,8 @@ def main():
     if com[:len("delete")]=="delete":
         #print(com[len("delete")+1:])
         delete(com[len("delete")+1:])
+    if com[:len("update")]=="update":
+        update(com[len("update")+1:])
 
 
 main()

@@ -1,1 +1,30 @@
-[]
+[
+    {
+        "id": 1,
+        "description": "sun",
+        "status": "todo",
+        "createdAt": "2025-01-15 14:59:23",
+        "updatedAt": "2025-01-15 14:59:23"
+    },
+    {
+        "id": 2,
+        "description": "moon",
+        "status": "todo",
+        "createdAt": "2025-01-15 14:59:26",
+        "updatedAt": "2025-01-15 14:59:26"
+    },
+    {
+        "id": 3,
+        "description": "star",
+        "status": "todo",
+        "createdAt": "2025-01-15 15:00:55",
+        "updatedAt": "2025-01-15 15:00:55"
+    },
+    {
+        "id": 4,
+        "description": "earth",
+        "status": "todo",
+        "createdAt": "2025-01-15 15:12:24",
+        "updatedAt": "2025-01-15 15:12:24"
+    }
+]
