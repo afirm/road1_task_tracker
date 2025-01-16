@@ -84,7 +84,6 @@ def update(s):
         return main()
     main()
 
-
 def delete(id):
     if id=="all":
         with open("tasks.json","w") as file:
@@ -118,8 +117,31 @@ def delete(id):
     print("task (id={}) deleted".format(id))
     main()
     
-def mark_in_progress(s):
-    print(s)
+def mark_in_progress(s=False):
+    with open("tasks.json","r") as file:
+        tasks=json.load(file)
+        newtasks=[]
+        changed=False
+        try:
+            for task in tasks:
+                if task["id"]==int(s):
+                    task["status"] = "in progress"
+                    changed=True
+                    newtasks.append(task)
+                else:
+                    newtasks.append(task)
+        except:
+            return main(f"'{s}' is not a valid id.")
+
+        if changed:
+            with open("tasks.json", "w") as file:
+                json.dump(newtasks, file, indent=4)
+            return main(f"Task {s} was successfully marked as in progress")
+        else:
+            return main(f"No tasks with id {s} found")
+            
+    
+
 def mark_done(s):
     print(s)
 
@@ -135,7 +157,9 @@ def list(j=True):
         print("No task found.")
     return main()
 
-def main():
+def main(msg=False):
+    if msg:
+        print(msg)
     com=input("What to do?")
     if com[:3]=="add":
         task_name=com[4:]
@@ -150,6 +174,11 @@ def main():
         delete(com[len("delete")+1:])
     if com[:len("update")]=="update":
         update(com[len("update")+1:])
+
+    if com[:len("mark_in_progress")] in ("mark_in_progress", "mark-in-progress", "mark in progress",):
+            mark_in_progress(com[len("mark_in_progress")+1:])
+
+
 
 
 main()
