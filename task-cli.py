@@ -131,7 +131,8 @@ def mark_in_progress(s=False):
                 else:
                     newtasks.append(task)
         except:
-            return main(f"'{s}' is not a valid id.")
+            s= "Please give an id" if s == "" else f"'{s}' is not a valid id."
+            return main(s)
 
         if changed:
             with open("tasks.json", "w") as file:
@@ -142,20 +143,83 @@ def mark_in_progress(s=False):
             
     
 
-def mark_done(s):
-    print(s)
+def mark_done(s=False):
+    with open("tasks.json","r") as file:
+        tasks=json.load(file)
+        newtasks=[]
+        changed=False
+        try:
+            for task in tasks:
+                if task["id"]==int(s):
+                    task["status"] = "done"
+                    changed=True
+                    newtasks.append(task)
+                else:
+                    newtasks.append(task)
+        except:
+            s= "Please give an id" if s == "" else f"'{s}' is not a valid id."
+            return main(s)
+
+        if changed:
+            with open("tasks.json", "w") as file:
+                json.dump(newtasks, file, indent=4)
+            return main(f"Task {s} was successfully marked as done")
+        else:
+            return main(f"No tasks with id {s} found")
+            
+def mark_todo(s=False):
+    with open("tasks.json","r") as file:
+        tasks=json.load(file)
+        newtasks=[]
+        changed=False
+        try:
+            for task in tasks:
+                if task["id"]==int(s):
+                    task["status"] = "todo"
+                    changed=True
+                    newtasks.append(task)
+                else:
+                    newtasks.append(task)
+        except:
+            s= "Please give an id" if s == "" else f"'{s}' is not a valid id."
+            return main(s)
+
+        if changed:
+            with open("tasks.json", "w") as file:
+                json.dump(newtasks, file, indent=4)
+            return main(f"Task {s} was successfully marked as todo")
+        else:
+            return main(f"No tasks with id {s} found")
+    
 
 def list(j=True):
-    try:
-        with open("tasks.json","r") as file:
-            tasks=json.load(file)
-            for task in tasks:
-                print(f">>> [ {task['id']} ] - [ {task['description']} ]'s status is [ {task['status']} ]")
-            if tasks == []:
-                print("task list is empty.")
-    except:
-        print("No task found.")
-    return main()
+    if j=="todo" or j=="done" or j =="in progress":
+        try:
+            jtasks = 0
+            with open("tasks.json","r") as file:
+                tasks=json.load(file)
+                for task in tasks:
+                    if task['status']== j:
+                        print(f">>> [ {task['id']} ] - [ {task['description']} ]'s status is [ {task['status']} ]")
+                        jtasks=+1
+                if jtasks == 0:
+                    print(f"no task is marked {j}.")
+                else:
+                    print(f"{jtasks} out of {len(tasks)} tasks marked as {j}.")
+                return main()
+        except:
+            print("No task found.")
+    else:
+        try:
+            with open("tasks.json","r") as file:
+                tasks=json.load(file)
+                for task in tasks:
+                    print(f">>> [ {task['id']} ] - [ {task['description']} ]'s status is [ {task['status']} ]")
+                if tasks == []:
+                    print("task list is empty.")
+        except:
+            print("No task found.")
+        return main()
 
 def main(msg=False):
     if msg:
@@ -164,21 +228,34 @@ def main(msg=False):
     if com[:3]=="add":
         task_name=com[4:]
         add(task_name)
-    if com[:4]=="list":
+    elif com[:4]=="list":
         try:
             list(com[5:])
         except:
             list()
-    if com[:len("delete")]=="delete":
+    elif com[:len("delete")]=="delete":
         #print(com[len("delete")+1:])
         delete(com[len("delete")+1:])
-    if com[:len("update")]=="update":
+    elif com[:len("update")]=="update":
         update(com[len("update")+1:])
 
-    if com[:len("mark_in_progress")] in ("mark_in_progress", "mark-in-progress", "mark in progress",):
+    elif com[:len("mark_in_progress")] in ("mark_in_progress", "mark-in-progress", "mark in progress", "mark in-progress","mark in_progress",):
             mark_in_progress(com[len("mark_in_progress")+1:])
 
+    elif com[:len("mark_done")] in ("mark_done", "mark-done", "mark done",):
+            mark_done(com[len("mark_done")+1:])
 
-
-
+    elif com[:len("mark_todo")] in ("mark_todo", "mark-todo", "mark todo",):
+            mark_todo(com[len("mark_todo")+1:])
+    else:
+        print('''not a proper command. Use:
+              add [task name]
+              update [task ID] [new task name]
+              delete [task delete]
+              list [empty for all tasks, "todo", "in-progress", and "done" for tasks with that status]
+              mark done [task ID]
+              mark in-progress [task ID]
+              mark todo [task ID]
+              ''')
+        main()
 main()
